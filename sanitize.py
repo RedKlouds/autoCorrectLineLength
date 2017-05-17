@@ -6,7 +6,12 @@ def sanitize(filename):
 	lineNumber = 0
 	print("BEGIN")
 	while(lineNumber != (len(f)-1)):
+		#check if the current line number doesn't exceed the length of the parsed
+		#file
+		
+		#for each parsed line check wether the length of that line is greater than 80
 		if(len(f[lineNumber]) >80):
+			
 			#if the current line contains three === or a pipe
 			#figure out how much to subtract, plus one extra
 			#from the beginning to the end, and add 1 pip to the end
