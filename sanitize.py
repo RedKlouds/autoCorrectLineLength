@@ -89,7 +89,7 @@ def main():
 	
 	#print(args.test)
 	#if(args.line-check):
-	#	print("FUCK YOU")
+	#	print("Test")
 	#parser.add_argument('--check', dest=
 	
 	
