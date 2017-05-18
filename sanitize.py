@@ -1,8 +1,8 @@
-import argparse, glob
+import argparse, glob, re, os
 
 
 class Cleaner:
-	_fileTypes = ('php','py','js','c','java','cpp')
+	_fileTypes = ('.php','.py','.js','.c','.java','.cpp')
 		
 	def __init__(self, usr_choice):
 		"""
@@ -27,7 +27,10 @@ class Cleaner:
 		"""
 		Function Name:
 		Description:
-			->
+			-> Method to check wether file input is valid extension
+			/supported extension, this method is mainly used for
+			-s args single file processing, multi processing has been
+			handled
 		PRECONDITION:
 			->
 		POSTCONDITION:
@@ -38,10 +41,21 @@ class Cleaner:
 		if type(usr_input) == str:
 			#if the input is a string check it for validility
 			#our Regex  statment			
-			matcher = re.complile('\.[^.]*$')
+			matcher = re.compile('\.[^.]*$')
 			extension = matcher.findall(usr_input)
-		self._parseFiles(usr_input)
 		
+			if len(extension) == 1:
+				#we have valid extension
+				#check if the extension is supported
+				print('here')
+				if extension[0] not in self._fileTypes:
+					#not supported
+					raise IOError("[+] File extension not supported")
+			else:
+				raise Exception("[+] Not a File")
+			
+		self._parseFiles(usr_input)
+
 	def _parseFiles(self, userInput):
 		"""
 		Function Name: ParseFiles
@@ -61,28 +75,48 @@ class Cleaner:
 			#files within the current directory specific to
 			#supported file types
 			for file in self._fileTypes:
-				temp_file_name = "*.%s" % file
+				temp_file_name = "*%s" % file
 				self._fileList.extend(glob.glob(temp_file_name))
 		else:
 			#append the file into the array
 			self._fileList.append(userInput)
 			
 			
-	def parse(self):
+			
+			
+	def cleanUp(self):
 		"""
-		Function Name:
+		Function Name: 
 		Description:
-			->
+			-> for each file in the fileList, perform
+			read, and write into clean folder operations
 		PRECONDITION:
 			->
 		POSTCONDITION:
 			->
 		ASSUMPTIONS:
 			-> None
-		"""				
+		"""			
+		if not os.path.exists("post_proccessed"):
+			os.makedirs("post_proccessed")		
 		for file in self._fileList:
 			#call the parser to work on this particular file
 			print("working on... %s" % file)
+			#get the extension
+
+			matcher = re.compile("(\w+)\.(.*)$")
+			data = matcher.findall(file)
+			fname = data[0][0]
+			ext = data[0][1]
+			#print(fname)
+			#print("data : %s" % data)			
+			#file_name = file.split('.')
+			#ext = file_name[1]
+			#file_name = file_name[0]
+			
+			ew_file = open("post_proccessed\\cleaned_%s.%s" % (fname, ext) , 'w')
+			original_file = open(file)
+			print(ext)
 			
 			
 			
@@ -190,12 +224,14 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 	
 	#all is where the item is saved, text
-	if args.all
+	if args.all:
 		print("clean all files selected")
 		user_choice = args.all
 	elif args.seperateFile:
 		print("clean seperate file: %s" %args.seperateFile)
 		user_choice = args.seperateFile
 	x = Cleaner(user_choice)
-	x.parse()
+	x.cleanUp()
 
+
+	print("Startting")
