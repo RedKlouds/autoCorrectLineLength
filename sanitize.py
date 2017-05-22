@@ -1,12 +1,142 @@
-import argparse
+import argparse, glob, re, os
 
+
+class Cleaner:
+	_fileTypes = ('.php','.py','.js','.c','.java','.cpp')
+		
+	def __init__(self, usr_choice):
+		"""
+		Function Name: Default Constructor
+		Description:
+			-> Initializes the Cleaner object.
+		PRECONDITION:
+			-> None
+		POSTCONDITION:
+			-> Cleans the given files to limit 80 lines max
+			per line.
+		ASSUMPTIONS:
+			-> None
+		"""		
+		#decide what the user wants to do
+		#parse a single file or entire directory
+		self._fileName = ""
+		self._fileList = list()		
+		self._checkUserInput(usr_choice)
+		
+	def _checkUserInput(self,usr_input):
+		"""
+		Function Name:
+		Description:
+			-> Method to check wether file input is valid extension
+			/supported extension, this method is mainly used for
+			-s args single file processing, multi processing has been
+			handled
+		PRECONDITION:
+			->
+		POSTCONDITION:
+			->
+		ASSUMPTIONS:
+			-> None
+		"""				
+		if type(usr_input) == str:
+			#if the input is a string check it for validility
+			#our Regex  statment			
+			matcher = re.compile('\.[^.]*$')
+			extension = matcher.findall(usr_input)
+		
+			if len(extension) == 1:
+				#we have valid extension
+				#check if the extension is supported
+				print('here')
+				if extension[0] not in self._fileTypes:
+					#not supported
+					raise IOError("[+] File extension not supported")
+			else:
+				raise Exception("[+] Not a File")
+			
+		self._parseFiles(usr_input)
+
+	def _parseFiles(self, userInput):
+		"""
+		Function Name: ParseFiles
+		Description:
+		    -> populate the files list array to prepare
+			for processing.
+		PRECONDITION:
+		    -> User input must be a boolean or file(includes extension)
+		POSTCONDITION:
+		    -> sets the fileTypes array to all files in directory,
+			or the indivudal file to parse.
+		ASSUMPTIONS:
+		    -> input needs to boolean or a string to a file.
+		"""
+		if type(userInput) == bool:
+			#if -a args is true then start to gather all
+			#files within the current directory specific to
+			#supported file types
+			for file in self._fileTypes:
+				temp_file_name = "*%s" % file
+				self._fileList.extend(glob.glob(temp_file_name))
+		else:
+			#append the file into the array
+			self._fileList.append(userInput)
+			
+			
+			
+			
+	def cleanUp(self):
+		"""
+		Function Name: 
+		Description:
+			-> for each file in the fileList, perform
+			read, and write into clean folder operations
+		PRECONDITION:
+			->
+		POSTCONDITION:
+			->
+		ASSUMPTIONS:
+			-> None
+		"""			
+		if not os.path.exists("post_proccessed"):
+			os.makedirs("post_proccessed")		
+		for file in self._fileList:
+			#call the parser to work on this particular file
+			print("working on... %s" % file)
+			#get the extension
+
+			matcher = re.compile("(\w+)\.(.*)$")
+			data = matcher.findall(file)
+			fname = data[0][0]
+			ext = data[0][1]
+			#print(fname)
+			#print("data : %s" % data)			
+			#file_name = file.split('.')
+			#ext = file_name[1]
+			#file_name = file_name[0]
+			
+			ew_file = open("post_proccessed\\cleaned_%s.%s" % (fname, ext) , 'w')
+			original_file = open(file)
+			print(ext)
+			
+			
+			
+			
+	def __str__(self):
+		return self._user_choice
+	
+	
 def sanitize(filename):
 	f = open(filename).read().split('\n')
 	newF = open("cleaned.cpp",'w')
 	lineNumber = 0
 	print("BEGIN")
 	while(lineNumber != (len(f)-1)):
+		#check if the current line number doesn't exceed the length of the parsed
+		#file
+		
+		#for each parsed line check wether the length of that line is greater than 80
 		if(len(f[lineNumber]) >80):
+			
 			#if the current line contains three === or a pipe
 			#figure out how much to subtract, plus one extra
 			#from the beginning to the end, and add 1 pip to the end
@@ -46,21 +176,27 @@ def sanitize(filename):
 	newF.close()
 	print("DONE")
 
-def testArgs1(hello):
-	print("YOU GAB ME : %s" % hello)
-
-def testArgs(helllo, you):
-	print("This is what you give me %s AND %s" % (helllo, you))
-
 
 def checkLinesGreaterThan(fileName,lineLimit):
-
+	"""
+	Function Name:
+	Description:
+		->
+	PRECONDITION:
+		->
+	POSTCONDITION:
+		->
+	ASSUMPTIONS:
+		-> None
+	"""			
 	f = open(fileName).read().split('\n')
 	lineNumber = 0
 	while(lineNumber != (len(f)-1)):
 		if(len(f[lineNumber]) > lineLimit):
 			print("[ %s ] %s " % ( lineNumber, f[lineNumber]))
 		lineNumber+=1
+
+
 
 def main():
 	"""
@@ -76,33 +212,26 @@ def main():
 	args.func(args)
 	"""
 	checkLinesGreaterThan("bintree.h",80)
-	#sanitize("bintree.cpp")
 
-	#parser.add_argument('integers', metavar='-v', type=str, nargs="+",
-	#help="somet stuff")
-	#parser.add_argument("--line-check", type=checkLinesGreaterThan,
-	#action="store", help="Check lines over 80 characters")
-	#parser.add_argument("test", help="Check lines over 80 characters", type=str)
-	
-	#parser.add_argument("-hello", "--test", type=testArgs1,help="Check lines over 80 characters")
-	
-	
-	#print(args.test)
-	#if(args.line-check):
-	#	print("Test")
-	#parser.add_argument('--check', dest=
-	
-	
-	#fileName = str(input("Enter the file name..ex 'bintree.cpp'(w/o Quotes):")) 
-	#print("You gave me the filename: %s" % fileName)
-	#checkLinesGreaterThan("bintree.cpp",80)
-	#sanitize("bintree.cpp")
 
 if __name__ == "__main__":
-	#fileName = str(input("Enter the file name..ex 'bintree.cpp'(w/o Quotes):")) 
-	#print("You gave me the filename: %s" % fileName)
-	#checkLinesGreaterThan("bintree.cpp",80)
-	#sanitize("bintree.cpp")
 
+	parser = argparse.ArgumentParser()
+
+	parser.add_argument("-a","--all", help = "clean all files in current directory", action="store_true")
+	parser.add_argument('-s',"--seperateFile", help= '[file] to clean seperate file')
+	user_choice = False
+	args = parser.parse_args()
 	
-	main()
+	#all is where the item is saved, text
+	if args.all:
+		print("clean all files selected")
+		user_choice = args.all
+	elif args.seperateFile:
+		print("clean seperate file: %s" %args.seperateFile)
+		user_choice = args.seperateFile
+	x = Cleaner(user_choice)
+	x.cleanUp()
+
+
+	print("Startting")
