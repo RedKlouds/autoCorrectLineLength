@@ -1,2 +1,8 @@
 
 __pycache__/
+
+*.cpp
+*.c
+*.php
+.swp
+.swo
