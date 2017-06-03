@@ -40,7 +40,6 @@ class Cleaner:
                 Description:
                         -> Method to check wether file input is valid extension
                         /supported extension, this method is mainly used for
-                        -s args single file processing, multi processing has been
                         handled
                 PRECONDITION:
                         -> 
@@ -60,7 +59,6 @@ class Cleaner:
                                 #check if the extension is supported
                                 if extension[0] not in self._fileTypes:
                                         #not supported
-                                        raise IOError("[+] File extension not supported")
                         else:
                                 raise Exception("[+] Not a File")
                         
@@ -87,7 +85,6 @@ class Cleaner:
                         for file in self._fileTypes:
                                 temp_file_name = "*%s" % file
                                 #combine list
-                                self._fileList.extend(glob.glob(temp_file_name))
                 else:
                         #append the file into the array
                         self._fileList.append(userInput)
@@ -118,10 +115,12 @@ class Cleaner:
                         fname = data[0][0]
                         ext = data[0][1]
 
+#
                         #get the data for block comment and single comment syntax
+#
+
 
                         data = self.getCommentSyntax(ext)
-                        new_file = open('post_proccessed\\new_%s.%s' % (fname, ext),'w+' )
                         #now check wether each line is:
                         # a single comment line
                         # or a multi comment block
@@ -134,25 +133,30 @@ class Cleaner:
                                 #get length of block comment
                                 #get length of single comment
 
+#
                                 #get the first charcter of single and block comment and compare
+#
+
 
                                 len_singleCom = len(data['singleL'])
 
                                 len_BlockComSrt = len(data['blockStart'])
                                 len_BlockComEnd = len(data['blockEnd'])
                                 #print(line)
-                                first_char = line[spaces:(spaces + len_singleCom)]
                                 #print('firstChar : %s' % first_char)
-                                block_char = line[spaces:(spaces + len_BlockComSrt)]
                                 #print('second block char: %s' % block_char)
+#
                                 #these lines exceed the maximum specified length
+#
+
                                 if len(line) > self.MAX_LENGTH:
                                         if first_char == data['singleL'] :
-                                                edited = self.makeCommentBlock(line, data['singleL'], '', singleLine=True)
                                                 new_file.write(edited)
                                         elif block_char == data['blockStart'] :
+#
                                                 #print('FOUND a COMMENT BLOCK \n%s\n' % line)
-                                                self.blockCommentWork(line, originalFile, data['blockStart'],data['blockEnd'], new_file)
+#
+
                                         #this is actual Code to indent         
 ##                                        else:
 ##                                                print(line)
@@ -162,7 +166,6 @@ class Cleaner:
                                         new_file.write(line)
                         new_file.close()
                        
-        def makeCommentBlock(self, line, startSyntax, endSyntax, singleLine=False):
                 #creates and returns a commented block
                 result_string = "%s" % startSyntax
                 temp_line = line
@@ -178,16 +181,20 @@ class Cleaner:
                 return result_string
         
         
-        def blockCommentWork(self,line,original_file, startSyntax,endSyntax, new_file):
+#
                 #read the first opening block comment, until we meet out closing
+#
+
                 #check wether its a single line comment block
                 #we already know the beginning syntax exist
                 refined_text = line.replace(startSyntax, '')
                 refined_text = refined_text.replace(endSyntax, '')
                 if endSyntax in line:
                         #if its a single block comment break it into parts
-                        new_file.write(self.makeCommentBlock(refined_text, startSyntax,endSyntax))
+#
                         #("%s \n %s\n %s " % (startSyntax, refined_text, endSyntax))
+#
+
                 else:
                         _line = line.rsplit('\n')
 
@@ -198,7 +205,6 @@ class Cleaner:
                                 #organize the comment block
                                 #until we encounter the closing/ending
                                 #block comment character
-                                edited = self.makeCommentBlock(line, startSyntax,'')
                                 if endSyntax in line:
                                         new_file.write(edited)
                                         new_file.write("\n%s"%endSyntax)
@@ -253,8 +259,6 @@ if __name__ == "__main__":
 
         parser = argparse.ArgumentParser()
 
-        parser.add_argument("-a","--all", help = "clean all files in current directory", action="store_true")
-        parser.add_argument('-s',"--seperateFile", help= '[file] to clean seperate file')
         user_choice = False
         args = parser.parse_args()
         
