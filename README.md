@@ -4,9 +4,11 @@ parse and reformat the source file.
 
 Uses
 
-Muliple File parsing
+Muliple File parsing<br/>
 `python3 sanitize.py -a # for parsing of all supported source code files in current directory`
+<br />
 Single File parsing
+<br />
 `python3 sanitize.py -s <fileName> # for pasing of single source file`
 
 The parsed edited file will be found in a seperate post_processing folder in current working directory.
